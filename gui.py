@@ -1,64 +1,94 @@
 import ttkbootstrap as ttk
 
-def screen_init(title : str, size : str,):
+def screen_init(title: str):
     root = ttk.Window(themename='superhero')
     root.title(title)
-    root.geometry(size)
     root.place_window_center()
-
-    # configure grid root
-    root.columnconfigure(0, weight=1)
-    root.rowconfigure(4, weight=1)
-
     screen_widget(root)
     return root
 
+def create_quadrillage(columns_size :str, canvas: ttk.Canvas):
+    canvas.delete("grid")
+    canvas.config(width=50 * columns_size, height=30 * 10)
+    for line in range(10):
+        for columns in range(int(columns_size)):
+            y0 = line * 50
+            x0 = columns * 50
+            y1 = (line + 1) * 50
+            x1 = (columns + 1) * 50
+            canvas.create_rectangle(x0, y0, x1, y1, fill="gray")
 
-def play_game():
-    pass
-
+def play_game(columns_size, canvas: ttk.Canvas):
+    print(columns_size)
+    create_quadrillage(columns_size, canvas)
 
 def replay_game():
     pass
 
-
 def to_do_validate():
     pass
 
-
-def screen_widget(window:ttk.Window):
-    # frame
-    frame_top = ttk.Frame(window)
-    frame_top.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
-    frame_bottom = ttk.Frame(window, padding=10)
-
-    #create sytle for widgets
+def screen_widget(root: ttk.Window):
+    # create style for widgets
     style_play = ttk.Style()
-    style_play.configure("Play.TButton",background="#80e680" ,font=("Helvetica", 12))
+    style_play.configure("Play.TButton", background="#80e680", font=("Helvetica", 12))
     style_replay = ttk.Style()
-    style_replay.configure("Replay.TButton",background="#0089d7" ,font=("Helvetica", 12))
+    style_replay.configure("Replay.TButton", background="#0089d7", font=("Helvetica", 12))
     style_quit = ttk.Style()
-    style_quit.configure("Quit.TButton",background="#f4aeae" ,font=("Helvetica", 12))
+    style_quit.configure("Quit.TButton", background="#f4aeae", font=("Helvetica", 12))
     style_valid = ttk.Style()
-    style_valid.configure("Valid.TButton",background="#80e680" ,font=("Helvetica", 12))
+    style_valid.configure("Valid.TButton", background="#80e680", font=("Helvetica", 12))
+    style_frame = ttk.Style()
+    style_frame.configure(style="Frame.TFrame", background="gray")
 
-    # create widgets top frame
-    ttk.Label(frame_top,text="Timer").pack(side="left",padx=10,pady=2)
-    ttk.Spinbox(frame_top, from_=0, to=100,width=5).pack(side="left",padx=10,pady=2)
-    ttk.Label(frame_top,text="s.").pack(side="left")
-    ttk.Spinbox(frame_top, from_=0, to=100,width=5).pack(side="left",padx=10,pady=2)
-    ttk.Label(frame_top,text="lettres").pack(side="left",padx=10,pady=2)
-    ttk.Button(frame_top,text="Jouer",command=play_game,style="Play.TButton").pack(side="right",padx=10,pady=2)
+    # frame and widget
+    frame_top = ttk.Frame(root)
+    frame_top.pack(side="top",fill="x", expand=True)
+    ttk.Label(frame_top, text="Timer").pack(side="left", padx=10, pady=2)
+    spinbox_timer = ttk.Spinbox(frame_top, from_=0, to=100, width=5)
+    spinbox_timer.pack(side="left")
+    spinbox_timer.insert(0, "45")
+    ttk.Label(frame_top, text="s.").pack(side="left")
+    spinbox_letter = ttk.Spinbox(frame_top, from_=0, to=100, width=5)
+    spinbox_letter.pack(side="left",padx=10, pady=2)
+    spinbox_letter.insert(0, "6")
+    ttk.Label(frame_top, text="lettres").pack(side="left")
+    ttk.Button(frame_top, text="Jouer", command=lambda: play_game(spinbox_letter.get(), board), style="Play.TButton").pack(side="right")
 
-    # creat widgets bottom frame
-    ttk.Button(frame_bottom,text="Rejouer",command=replay_game,style="Replay.TButton").pack(side="left",expand=True)
-    ttk.Button(frame_bottom,text="Quitter",command=window.destroy,style="Quit.TButton").pack(side="right",expand=True)
+    # frame and widget
+    frame_entry_letter = ttk.Frame(root,style="Frame.TFrame")
+    frame_entry_letter.pack(side="top", fill="x", expand=True)
+    entry_letter = ttk.Entry(frame_entry_letter)
+    entry_letter.pack(fill="both")
 
-    # input
-    ttk.Entry(window).grid(row=1, column=0, sticky="ew",padx=10,pady=10)
-    ttk.Button(window, text="Valider", command=to_do_validate,style="Valid.TButton").grid(row=2, column=0, sticky="ew",padx=10,pady=10)
-    ttk.Label(window, text="0",anchor="center").grid(row=3, column=0,sticky="ew",padx=10,pady=10)
-    ttk.Canvas(window,background="white").grid(row=4, column=0, sticky="nsew",padx=10,pady=10)
-    ttk.Label(window, text="Label",anchor="center").grid(row=5, column=0,sticky="ew",padx=10,pady=10)
-    frame_bottom.grid(row=6, column=0, sticky="ew",padx=10,pady=10)
+    #
+    frame_button_validate = ttk.Frame(root)
+    frame_button_validate.pack(side="top",fill="both", expand=True)
+    ttk.Button(frame_button_validate, text="Valider", command=to_do_validate, style="Valid.TButton").pack(fill="both",anchor="center")
+
+    #frame label clock and widget
+    frame_label_clock = ttk.Frame(root)
+    frame_label_clock.pack(side="top", fill="both", expand=True)
+    ttk.Label(frame_label_clock, text="0", anchor="center").pack(fill="both",anchor="center")
+
+    # frame board and widget
+    frame_board = ttk.Frame(root)
+    frame_board.pack(side="top", fill="both", expand=True)
+    board = ttk.Canvas(frame_board, background="white")
+    board.pack( fill="both", expand=True,anchor="center")
+
+    #frame label_solution
+    frame_label_solution = ttk.Frame(root)
+    frame_label_solution.pack(side="top", fill="both", expand=True)
+    ttk.Label(root, text="Label", anchor="center").pack(fill="both")
+
+    # create widgets bottom frame
+    frame_bottom = ttk.Frame(root, padding=10)
+    frame_bottom.pack(side="top", fill="both", expand=True)
+    ttk.Button(frame_bottom, text="Rejouer", command=replay_game, style="Replay.TButton").pack(side="left", expand=True)
+    ttk.Button(frame_bottom, text="Quitter", command=root.destroy, style="Quit.TButton").pack(side="right", expand=True)
+
+
+
+
 
