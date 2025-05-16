@@ -23,6 +23,8 @@ def load_words()->list:
 
 def pick_words(size:int)->str:
     #prendre un mot de la taille "size" dans votre stockage
+    if not list_words_size == []:
+        list_words_size.clear()
     data_words = load_words()
     for word in data_words:
         if len(word) == size:
