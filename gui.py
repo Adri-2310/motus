@@ -1,5 +1,7 @@
 import ttkbootstrap as ttk
 
+
+
 def screen_init(title: str):
     """
     Initialize the main window of the application with a given title.

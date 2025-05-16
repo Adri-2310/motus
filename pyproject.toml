@@ -5,4 +5,5 @@ description = "Add your description here"
 requires-python = ">=3.13"
 dependencies = [
     "ttkbootstrap>=1.13.4",
+    "unidecode>=1.4.0",
 ]
